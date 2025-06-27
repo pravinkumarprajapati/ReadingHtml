@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using HtmlAgilityPack;
-using System.IO;
-using System.Linq;
+﻿using HtmlAgilityPack;
+using System.Text;
 
 class Program
 {
@@ -12,22 +7,23 @@ class Program
     {
         var client = new HttpClient();
         var baseUrl = "https://ehrms.upsdc.gov.in//ReportSummary/PublicReports/PtwoDetails?empcd={0}&deptid=UPD0003&type=2";
-        int startEmpcd = 2200165;  // Starting empcd
-        int endEmpcd = 2200169;    // 2 million records from start
+        int startEmpcd = 2200169; // Starting empcd
+        int endEmpcd = 2200169;   // 2 million records from start
         string outputFile = "employee_data.csv";
 
-        // CSV headers
+        // CSV headers for specified fields
         var headers = new List<string>
         {
             "Name", "eHRMS Code", "Father's Name", "Home District", "Date of Birth", "Cadre", "Gender",
             "Service Start Date", "Spouse eHRMS Code", "Current Status", "Appointment Date",
-            "Permanent Address", "Local Address", "District", "Office Name", "Designation", "Post Name", "Joining Date"
+            "Permanent Address", "Local Address", "District", "Office Name", "Designation", "Post Name", "Joining Date",
+            "All Table Data"
         };
 
         // Write headers if file doesn't exist
         if (!File.Exists(outputFile))
         {
-            File.WriteAllText(outputFile, string.Join(",", headers) + "\n");
+            File.WriteAllText(outputFile, string.Join(",", headers.Select(h => $"\"{h}\"")) + "\n");
         }
 
         // Crawl data
@@ -55,7 +51,7 @@ class Program
             {
                 Console.WriteLine($"Error for empcd {empcd}: {ex.Message}");
             }
-            await Task.Delay(1000);  // 1-second delay
+            await Task.Delay(1000); // 1-second delay
         }
     }
 
@@ -64,78 +60,180 @@ class Program
         var doc = new HtmlDocument();
         doc.LoadHtml(html);
         var data = new Dictionary<string, string>();
+        var allTableData = new StringBuilder();
 
-        // Extract personal details
-        var personalTable = doc.DocumentNode.SelectSingleNode("//div[@id='FullpagePrint']//table");
-        var rows = personalTable.SelectNodes("tr");
-        var values = new List<string>();
-        foreach (var tr in rows)
+        // Extract personal details from the table inside div#FullpagePrint
+        var personalTable = doc.DocumentNode.SelectSingleNode("//div[@id='FullpagePrint']//table//table");
+        if (personalTable != null)
         {
-            var tds = tr.SelectNodes("td");
-            if (tds != null)
+            var rows = personalTable.SelectNodes(".//tr");
+            if (rows != null)
             {
-                if (tds.Count >= 4) values.Add(tds[3].InnerText.Trim());
-                if (tds.Count >= 8) values.Add(tds[7].InnerText.Trim());
+                foreach (var row in rows)
+                {
+                    var cells = row.SelectNodes("td|th");
+                    if (cells != null)
+                    {
+                        // Collect all <td> and <th> values
+                        var cellValues = cells.Select(c => c.InnerText.Trim()).ToList();
+                        allTableData.AppendLine(string.Join("|", cellValues));
+
+                        // Map specific fields based on labels
+                        if (cells.Count >= 4)
+                        {
+                            var label = cells[1].InnerText.Trim().Replace("\u00A0", " ");
+                            var value = cells[3].InnerText.Trim();
+                            switch (label)
+                            {
+                                case "Name": data["Name"] = value; break;
+                                case "eHRMS Code": data["eHRMS Code"] = value; break;
+                                case "Father's Name": data["Father's Name"] = value; break;
+                                case "Home District": data["Home District"] = value; break;
+                                case "Date of Birth": data["Date of Birth"] = value; break;
+                                case "Cadre": data["Cadre"] = value; break;
+                                case "Gender": data["Gender"] = value; break;
+                                case "Service Start Date": data["Service Start Date"] = value; break;
+                                case "Spouse eHRMS Code": data["Spouse eHRMS Code"] = value; break;
+                                case "Current Status": data["Current Status"] = value; break;
+                                case "Appointment Date": data["Appointment Date"] = value; break;
+                            }
+                        }
+                        // Check second set of columns if present
+                        if (cells.Count >= 8)
+                        {
+                            var label = cells[5].InnerText.Trim().Replace("\u00A0", " ");
+                            var value = cells[7].InnerText.Trim();
+                            switch (label)
+                            {
+                                case "Name": data["Name"] = value; break;
+                                case "eHRMS Code": data["eHRMS Code"] = value; break;
+                                case "Father's Name": data["Father's Name"] = value; break;
+                                case "Home District": data["Home District"] = value; break;
+                                case "Date of Birth": data["Date of Birth"] = value; break;
+                                case "Cadre": data["Cadre"] = value; break;
+                                case "Gender": data["Gender"] = value; break;
+                                case "Service Start Date": data["Service Start Date"] = value; break;
+                                case "Spouse eHRMS Code": data["Spouse eHRMS Code"] = value; break;
+                                case "Current Status": data["Current Status"] = value; break;
+                                case "Appointment Date": data["Appointment Date"] = value; break;
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        if (values.Count >= 17)
-        {
-            data["Name"] = values[0];
-            data["eHRMS Code"] = values[1];
-            data["Father's Name"] = values[2];
-            data["Home District"] = values[6];
-            data["Date of Birth"] = values[4];
-            data["Cadre"] = values[8];
-            data["Gender"] = values[10];
-            data["Service Start Date"] = values[12];
-            data["Spouse eHRMS Code"] = values[14];
-            data["Current Status"] = values[16];
-            data["Appointment Date"] = values[11];
-        }
-
-        // Extract present posting details
+        // Extract present posting details from the first table#tblDEStatus
         var postingTables = doc.DocumentNode.SelectNodes("//table[@id='tblDEStatus']");
         if (postingTables != null && postingTables.Count > 0)
         {
-            var postingRow = postingTables[0].SelectSingleNode("tbody/tr");
-            if (postingRow != null)
+            var postingTable = postingTables[0];
+            var headers = postingTable.SelectNodes(".//thead//tr//th");
+            if (headers != null)
             {
-                var tds = postingRow.SelectNodes("td");
-                if (tds != null && tds.Count >= 5)
+                allTableData.AppendLine("Present Posting Headers: " + string.Join("|", headers.Select(h => h.InnerText.Trim())));
+            }
+            var rows = postingTable.SelectNodes(".//tbody//tr");
+            if (rows != null)
+            {
+                foreach (var row in rows)
                 {
-                    data["District"] = tds[0].InnerText.Trim();
-                    data["Office Name"] = tds[1].InnerText.Trim();
-                    data["Designation"] = tds[3].InnerText.Trim();
-                    data["Post Name"] = tds[3].InnerText.Trim();
-                    data["Joining Date"] = tds[4].InnerText.Trim();
+                    var cells = row.SelectNodes("td");
+                    if (cells != null && cells.Count >= 5)
+                    {
+                        allTableData.AppendLine("Present Posting: " + string.Join("|", cells.Select(c => c.InnerText.Trim())));
+                        data["District"] = cells[0].InnerText.Trim();
+                        data["Office Name"] = cells[1].InnerText.Trim();
+                        data["Designation"] = cells[3].InnerText.Trim();
+                        data["Post Name"] = cells[3].InnerText.Trim();
+                        data["Joining Date"] = cells[4].InnerText.Trim();
+                    }
+                }
+            }
+        }
+
+        // Extract qualifications from the second table#tblDEStatus
+        if (postingTables != null && postingTables.Count > 1)
+        {
+            var qualTable = postingTables[1];
+            var headers = qualTable.SelectNodes(".//thead//tr//th");
+            if (headers != null)
+            {
+                allTableData.AppendLine("Qualifications Headers: " + string.Join("|", headers.Select(h => h.InnerText.Trim())));
+            }
+            var rows = qualTable.SelectNodes(".//tbody//tr");
+            if (rows != null)
+            {
+                foreach (var row in rows)
+                {
+                    var cells = row.SelectNodes("td");
+                    if (cells != null)
+                    {
+                        allTableData.AppendLine("Qualifications: " + string.Join("|", cells.Select(c => c.InnerText.Trim())));
+                    }
+                }
+            }
+        }
+
+        // Extract past posting details from the third table#tblDEStatus
+        if (postingTables != null && postingTables.Count > 2)
+        {
+            var pastTable = postingTables[2];
+            var headers = pastTable.SelectNodes(".//thead//tr//th");
+            if (headers != null)
+            {
+                allTableData.AppendLine("Past Posting Headers: " + string.Join("|", headers.Select(h => h.InnerText.Trim())));
+            }
+            var rows = pastTable.SelectNodes(".//tbody//tr");
+            if (rows != null)
+            {
+                foreach (var row in rows)
+                {
+                    var cells = row.SelectNodes("td");
+                    if (cells != null)
+                    {
+                        allTableData.AppendLine("Past Posting: " + string.Join("|", cells.Select(c => c.InnerText.Trim())));
+                    }
                 }
             }
         }
 
         // Extract Permanent Address
-        var permAddressB = doc.DocumentNode.SelectSingleNode("//b[text()='Permanent Address']");
-        if (permAddressB != null)
+        var permAddressNode = doc.DocumentNode.SelectSingleNode("//b[contains(text(), 'Permanent Address')]");
+        if (permAddressNode != null)
         {
-            var addressTable = permAddressB.Ancestors("tr").FirstOrDefault()
-                ?.NextSibling?.NextSibling?.SelectSingleNode("td/table");
+            var addressTable = permAddressNode.Ancestors("tr").FirstOrDefault()
+                ?.SelectSingleNode("following-sibling::tr[2]//table");
             if (addressTable != null)
             {
-                data["Permanent Address"] = addressTable.SelectSingleNode("tbody/tr/td")?.InnerText.Trim() ?? "";
+                var cells = addressTable.SelectNodes(".//td");
+                if (cells != null)
+                {
+                    data["Permanent Address"] = cells[0].InnerText.Trim();
+                    allTableData.AppendLine("Permanent Address: " + cells[0].InnerText.Trim());
+                }
             }
         }
 
         // Extract Local Address
-        var localAddressB = doc.DocumentNode.SelectSingleNode("//b[text()='Local Address']");
-        if (localAddressB != null)
+        var localAddressNode = doc.DocumentNode.SelectSingleNode("//b[contains(text(), 'Local Address')]");
+        if (localAddressNode != null)
         {
-            var addressTable = localAddressB.Ancestors("tr").FirstOrDefault()
-                ?.NextSibling?.NextSibling?.SelectSingleNode("td/table");
+            var addressTable = localAddressNode.Ancestors("tr").FirstOrDefault()
+                ?.SelectSingleNode("following-sibling::tr[2]//table");
             if (addressTable != null)
             {
-                data["Local Address"] = addressTable.SelectSingleNode("tbody/tr/td")?.InnerText.Trim() ?? "";
+                var cells = addressTable.SelectNodes(".//td");
+                if (cells != null)
+                {
+                    data["Local Address"] = cells[0].InnerText.Trim();
+                    allTableData.AppendLine("Local Address: " + cells[0].InnerText.Trim());
+                }
             }
         }
+
+        // Store all table data in a single field
+        data["All Table Data"] = allTableData.ToString().Replace("\n", "; ").Replace("\r", "");
 
         return data;
     }
