@@ -48,47 +48,85 @@ class Program
                 }
             }
 
-            // Extract headers
-            var headers = table.SelectNodes(".//th");
-            var columns = headers?.Select(h => h.InnerText.Trim()).ToList() ?? new List<string>();
-
-            if (columns.Any())
+            // Handle the first table (employee details) differently
+            if (tableIdx - 1 == 1) // First table
             {
-                tableData["columns"] = columns;
-            }
-
-            // Extract rows
-            var rows = table.SelectSingleNode(".//tbody")?.SelectNodes(".//tr")
-                ?? table.SelectNodes(".//tr")?.Skip(headers != null ? 1 : 0);
-
-            if (rows != null)
-            {
-                foreach (var row in rows)
+                tableData["title"] = "Employee Details";
+                tableData["columns"] = new List<string> { "Field", "Value" };
+                var rows = table.SelectNodes(".//tr");
+                if (rows != null)
                 {
-                    var cells = row.SelectNodes(".//td");
-                    if (cells != null)
+                    foreach (var row in rows)
                     {
-                        if (cells.Count == columns.Count && columns.Any())
+                        var cells = row.SelectNodes(".//td");
+                        if (cells != null && cells.Count == 8)
                         {
-                            var rowData = new Dictionary<string, string>();
-                            for (int i = 0; i < columns.Count; i++)
+                            // Left side (Field 1: cells[1], Value 1: cells[3])
+                            if (!string.IsNullOrEmpty(cells[1].InnerText.Trim()) && !string.IsNullOrEmpty(cells[3].InnerText.Trim()))
                             {
-                                rowData[columns[i]] = cells[i].InnerText.Trim();
+                                ( ( List<Dictionary<string, string>> )tableData["rows"] ).Add(new Dictionary<string, string>
+                                {
+                                    { "Field", cells[1].InnerText.Trim() },
+                                    { "Value", cells[3].InnerText.Trim() }
+                                });
                             }
-                            ( ( List<Dictionary<string, string>> )tableData["rows"] ).Add(rowData);
+                            // Right side (Field 2: cells[5], Value 2: cells[7])
+                            if (!string.IsNullOrEmpty(cells[5].InnerText.Trim()) && !string.IsNullOrEmpty(cells[7].InnerText.Trim()))
+                            {
+                                ( ( List<Dictionary<string, string>> )tableData["rows"] ).Add(new Dictionary<string, string>
+                                {
+                                    { "Field", cells[5].InnerText.Trim() },
+                                    { "Value", cells[7].InnerText.Trim() }
+                                });
+                            }
                         }
-                        else if (cells.Count == 1 && !columns.Any()) // Handle single-cell tables
+                    }
+                }
+            }
+            else
+            {
+                // Extract headers for other tables
+                var headers = table.SelectNodes(".//th");
+                var columns = headers?.Select(h => h.InnerText.Trim()).ToList() ?? new List<string>();
+
+                if (columns.Any())
+                {
+                    tableData["columns"] = columns;
+                }
+
+                // Extract rows
+                var rows = table.SelectSingleNode(".//tbody")?.SelectNodes(".//tr")
+                    ?? table.SelectNodes(".//tr")?.Skip(headers != null ? 1 : 0);
+
+                if (rows != null)
+                {
+                    foreach (var row in rows)
+                    {
+                        var cells = row.SelectNodes(".//td");
+                        if (cells != null)
                         {
-                            tableData["columns"] = new List<string> { "Address" };
-                            ( ( List<Dictionary<string, string>> )tableData["rows"] ).Add(
-                                new Dictionary<string, string> { { "Address", cells[0].InnerText.Trim() } });
+                            if (cells.Count == columns.Count && columns.Any())
+                            {
+                                var rowData = new Dictionary<string, string>();
+                                for (int i = 0; i < columns.Count; i++)
+                                {
+                                    rowData[columns[i]] = cells[i].InnerText.Trim();
+                                }
+                                ( ( List<Dictionary<string, string>> )tableData["rows"] ).Add(rowData);
+                            }
+                            else if (cells.Count == 1 && !columns.Any()) // Handle single-cell tables
+                            {
+                                tableData["columns"] = new List<string> { "Address" };
+                                ( ( List<Dictionary<string, string>> )tableData["rows"] ).Add(
+                                    new Dictionary<string, string> { { "Address", cells[0].InnerText.Trim() } });
+                            }
                         }
                     }
                 }
             }
 
             // Only add table if it has data
-            if (( ( List<string> )tableData["columns"] ).Any() || ( ( List<Dictionary<string, string>> )tableData["rows"] ).Any())
+            if (( ( List<Dictionary<string, string>> )tableData["rows"] ).Any())
             {
                 jsonOutput["tables"].Add(tableData);
             }

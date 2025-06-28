@@ -1,0 +1,658 @@
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link href="/css/bootstrap-select.min.css" rel="stylesheet" />
+<script src="/Scripts/ManavSampada/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="/Scripts/bootstrap.min.js"></script>
+
+<script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<style>
+    .selectpicker,
+    .form-control {
+        width: 200px !important;
+    }
+
+    tr.d0 td {
+        background-color: whitesmoke;
+        color: black;
+    }
+
+    tr.d1 td {
+        background-color: #EDEDED;
+        color: black;
+    }
+
+    table tr :hover td {
+        background-color: red;
+    }
+
+    .d3 {
+        color: red;
+    }
+
+    .d4 {
+        color: blue;
+    }
+
+    #tblDEStatus tr:hover {
+        color: #fff;
+        background-color: #d8d6b5;
+    }
+
+    #tblDEStatus tr:hover td {
+        background-color: transparent;
+    }
+
+    input[type="submit"],
+    input[type="button"],
+    button {
+        font-family: Verdana, Arial, sans-serif;
+        font-size: .8em;
+        background: none repeat scroll 0 0 #005F00;
+        padding: 4px 14px;
+        color: #fff;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+        text-transform: uppercase;
+        cursor: pointer;
+        border: 1px solid #444;
+        -webkit-box-shadow: 0 2px 6px rgba(255, 255, 255, 0.5) inset;
+        -moz-box-shadow: 0 2px 6px rgba(255, 255, 255, 0.5) inset;
+        box-shadow: 0 2px 6px rgba(255, 255, 255, 0.5) inset;
+    }
+
+    .paging_full_numbers {
+        display: inline-block;
+    }
+
+    .paging_full_numbers a {
+        color: black;
+        float: left;
+        padding: 8px 16px;
+        text-decoration: none;
+    }
+
+    .paging_full_numbers a.current {
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 5px;
+    }
+
+    .paging_full_numbers a:hover:not(.active) {
+        background-color: #ddd;
+        border-radius: 5px;
+    }
+</style>
+<form action="/ReportSummary/PublicReports/PtwoDetails" id="frmReport" method="post">
+    <div style="width: 95%; background-color: #fce4e4; font-family: Tahoma;min-height:650px">
+        <style>
+            @media print {
+                .hide-print {
+                    display: none;
+                }
+
+                /*#datatables .allowprint td:nth-child(4), #datatables .allowprint td:nth-child(5), #datatables th:nth-child(4), #datatables th:nth-child(5) {
+                     display: none;
+                 }*/
+            }
+        </style>
+        <a id="reportPrintButton" onclick="printDivByID('FullpagePrint')" title="Print Fact Sheet(P2)" value="print"
+            style="float: right;margin-right: 56px;"><i class="fa fa-print"><img src="/Images/PrintBtn.jpg"
+                    height="30px;" /></i></a>
+        <div id="FullpagePrint">
+            <table style="width: 100%">
+                <thead>
+                    <tr style="width: 340px; text-align: center">
+                        <td style="text-align: center; text-transform: capitalize; color: #640505; font-family: Tahoma">
+                            <img src="/img/logo/upgov.png" style="height: 80px;" />
+                        </td>
+                    </tr>
+                    <tr style="width: 340px; text-align: center">
+                        <td style="text-align: center; text-transform: capitalize; color: #640505; font-family: Tahoma">
+                            <strong style="font-size: 25px;">
+                                MANAV SAMPADA UTTAR PRADESH
+                            </strong>
+                        </td>
+                    </tr>
+                </thead>
+
+                <tr style="text-align:center">
+                    <td>
+                        <table style="width:99%;margin-left: 10px;font-size: 12px;">
+                            <tr>
+                                <td style="width:100%;font-weight:bold;text-align:center;height: 25px;" colspan="8">
+                                    DEPARTMENT OF BASIC EDUCATION</td>
+                            </tr>
+                            <tr>
+                                <td style="width:100%;font-weight:bold;text-align:center;height: 25px;" colspan="8">
+                                    DIRECTOR GENERAL SCHOOL EDUCATION</td>
+                            </tr>
+
+                            <tr>
+                                <td style="text-align: center; text-transform: capitalize; color: #640505; font-family: Tahoma;height: 25px;"
+                                    colspan="8">
+                                    <strong style="text-decoration:underline">
+                                        Fact Sheet(P2)
+                                    </strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:100%;font-weight:bold;text-align:center;" colspan="8">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">1.
+                                </td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Name</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;">PRATIBHA DEVI</td>
+                                <td style="width:2%;font-weight:bold;text-align:center;height: 25px;">2.</td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">eHRMS Code</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;">2175930</td>
+                            </tr>
+                            <tr>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">3.
+                                </td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Father&#39;s&nbsp;Name</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;">VIRENDRA PRASAD PANDEY</td>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">4.
+                                </td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Employee&nbsp;Type</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;">Regular</td>
+                            </tr>
+                            <tr>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">5.
+                                </td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Date&nbsp;of&nbsp;Birth</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;">10 Jun 1988</td>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">6.
+                                </td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">PH/DFF/ExSer</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;"></td>
+                            </tr>
+                            <tr>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">7.
+                                </td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Home&nbsp;District</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;">AZAMGARH</td>
+
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">8.
+                                </td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Seniority&nbsp;No.</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;"></td>
+
+                            </tr>
+                            <tr>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">9.
+                                </td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Cadre</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;">AT Primary</td>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">
+                                    10.</td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Level&nbsp;in&nbsp;Cadre</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;"></td>
+                            </tr>
+                            <tr>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">
+                                    11.</td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Gender</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;">Female</td>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">
+                                    12.</td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Appointment&nbsp;Date</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;">05 Dec 2020</td>
+                            </tr>
+                            <tr>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">
+                                    13.</td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Service&nbsp;Start&nbsp;Date</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;">07 Dec 2020</td>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">
+                                    14.</td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Confirmation&nbsp;Date</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;"></td>
+                            </tr>
+                            <tr>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">
+                                    15.</td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Spouse&nbsp;eHRMS&nbsp;Code</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;">Not in Government</td>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">
+                                    16.</td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">eSalary&nbsp;Code</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;"></td>
+                            </tr>
+                            <tr>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">
+                                    17.</td>
+                                <td style="width:17%;font-weight:bold;height: 25px;">Current Status</td>
+                                <td style="width:1%;text-align:center;height: 25px;"><b>:</b></td>
+                                <td style="width:30%;height: 25px;">Active</td>
+                                <td style="width:2%;font-weight:bold;text-align:center;font-size: 11px;height: 25px;">
+                                </td>
+                                <td style="width:17%;font-weight:bold;height: 25px;"></td>
+                                <td style="width:1%;text-align:center;height: 25px;"></td>
+                                <td style="width:30%;height: 25px;"></td>
+                            </tr>
+
+                        </table>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 13px;"><b>&nbsp;&nbsp;18.&nbsp;<u>Posting Department/Directorate
+                                :</u></b>&nbsp; BASIC EDUCATION, DIRECTOR GENERAL SCHOOL EDUCATION</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 13px;"><b>&nbsp;&nbsp;19.&nbsp;<u>Present Posting Details</u></b></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center">
+                        <table border="1" cellpadding="5" cellspacing="1"
+                            style="border-collapse: collapse; border-color: #000; font-size: 13px;width:95%;margin-left:auto;margin-right:auto;padding-bottom:15px"
+                            id="tblDEStatus">
+                            <thead>
+                                <tr style="height:30px">
+                                    <th style="color: #1e68a3;text-align: center;width:5%;">
+                                        District
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:20%;">
+                                        Reporting Office
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:20%;">
+                                        Posting Office
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:10%;">
+                                        Post Name
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:5%;">
+                                        Joining Date
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr style="text-align:center;width:2%;" class='d1'>
+                                    <td style="text-align: left;">
+                                        BASTI
+                                    </td>
+                                    <td style="text-align: left;">
+                                        BEO PARASRAMPUR
+                                    </td>
+                                    <td style="text-align: left;">
+                                        PS RATANPUR-
+                                    </td>
+                                    <td style="text-align: left;">
+                                        ASSISTANT TEACHER सामाजिकविषय अध्यापक
+                                    </td>
+                                    <td style="text-align: left;">
+                                        05 Dec 2020
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 13px;"><b>&nbsp;&nbsp;20.&nbsp;<u>Qualification with Specialization</u></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center">
+
+                        <table border="1" cellpadding="5" cellspacing="1"
+                            style="border-collapse: collapse; border-color: #000; font-size: 13px;width:95%;margin-left:auto;margin-right:auto;padding-bottom:15px"
+                            id="tblDEStatus">
+                            <thead>
+                                <tr style="height:30px">
+                                    <th style="color: #1e68a3;text-align: center;width:2%;">
+                                        Sr.No.
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:30%;">
+                                        Education Name
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:55%;">
+                                        Board/University Name
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:13%;">
+                                        Passing Year
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+                            <tbody>
+
+
+                                <tr style="text-align:center;width:2%; " class='d1'>
+                                    <td>1 </td>
+                                    <td style="text-align: left;width:30%;">
+                                        B.A. (Sanskrit)
+                                    </td>
+                                    <td style="text-align: left;width:55%;">
+                                        Sampoornanand Sanskrit Vishwa Vidyalaya Varanasi UP
+                                    </td>
+                                    <td style="text-align: center;width:13%;">
+                                        2009
+                                    </td>
+
+                                </tr>
+                                <tr style="text-align:center;width:2%; " class='d0'>
+                                    <td>2 </td>
+                                    <td style="text-align: left;width:30%;">
+                                        Intermediate (Arts)
+                                    </td>
+                                    <td style="text-align: left;width:55%;">
+                                        Uttar Pradesh Madhyamic Sanskrit Shiksha Parishad Lucknow up
+                                    </td>
+                                    <td style="text-align: center;width:13%;">
+                                        2006
+                                    </td>
+
+                                </tr>
+                                <tr style="text-align:center;width:2%; " class='d1'>
+                                    <td>3 </td>
+                                    <td style="text-align: left;width:30%;">
+                                        High School
+                                    </td>
+                                    <td style="text-align: left;width:55%;">
+                                        Uttar Pradesh Madhyamic Sanskrit Shiksha Parishad Lucknow up
+                                    </td>
+                                    <td style="text-align: center;width:13%;">
+                                        2004
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 13px;"><b>&nbsp;&nbsp;21.&nbsp;<u>Past Posting Details</u></b></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center">
+                        <table border="1" cellpadding="5" cellspacing="1"
+                            style="border-collapse: collapse; border-color: #000; font-size: 13px;width:95%;margin-left:auto;margin-right:auto;padding-bottom:15px"
+                            id="tblDEStatus">
+                            <thead>
+                                <tr style="height:30px">
+                                    <th style="color: #1e68a3;text-align: center;width:2%;">
+                                        Sr.No.
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:17%;">
+                                        District
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:23%;">
+                                        Office Name
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:19%;">
+                                        Desgination
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:19%;">
+                                        Post Name
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:10%;">
+                                        Joining Date
+                                    </th>
+                                    <th style="color: #1e68a3;text-align: center;width:10%;">
+                                        Date of Relieving
+                                    </th>
+                                </tr>
+
+                            </thead>
+                            <tbody>
+
+
+                                <tr style="text-align:center;width:2%;" class='d1'>
+                                    <td>1 </td>
+                                    <td style="text-align: left;width:17%;">
+                                        BASTI
+                                    </td>
+                                    <td style="text-align: left;width:23%;">
+                                        BSA BASTI(BED)
+                                    </td>
+                                    <td style="text-align: left;width:19%;">
+                                        ASSISTANT TEACHER
+                                    </td>
+                                    <td style="text-align: left;width:19%;">
+                                        ASSISTANT TEACHER
+                                    </td>
+                                    <td style="text-align: left;width:10%;">
+                                        07 Dec 2020
+                                    </td>
+                                    <td style="text-align: left;width:10%;">
+                                        28 Jan 2021
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 13px;"><b>&nbsp;&nbsp;22.&nbsp;<u>Professional Training Completed</u></b></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center">
+                        <span style="color:red;font-weight:bold">No Data Available...</span>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 13px;"><b>&nbsp;&nbsp;23.&nbsp;<u>Departmental Enquiry/Proceedings (if
+                                any)</u></b></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center">
+                        <span style="color:red;font-weight:bold">No Data Available...</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 13px;"><b>&nbsp;&nbsp;24.&nbsp;<u>Permanent&nbsp;Address</u></b></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center">
+                        <table border="1" cellpadding="5" cellspacing="1"
+                            style="border-color: #000; font-size: 13px;width:95%;margin-left:auto;margin-right:auto;padding-bottom:15px;background-color:whitesmoke">
+                            <tbody>
+                                <tr style="text-align:left;width:100%;">
+                                    <td>VILL-RAMPUR KALA POST-GALIWPUR(PAWAI) DIST- AJAMGARH UP,AZAMGARH UTTAR PRADESH
+                                        276288 </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 13px;"><b>&nbsp;&nbsp;25.&nbsp;<u>Local&nbsp;Address</u></b></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center">
+                        <table border="1" cellpadding="5" cellspacing="1"
+                            style="border-color: #000; font-size: 13px;width:95%;margin-left:auto;margin-right:auto;padding-bottom:15px;background-color:whitesmoke">
+
+                            <tbody>
+                                <tr style="text-align:left;width:100%;">
+                                    <td>VILL-RAMPUR KALA POST-GALIWPUR(PAWAI) DIST- AJAMGARH UP,AZAMGARH UTTAR PRADESH
+                                        276288</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr id="trDepWise">
+                    <td style="text-align:center"></td>
+                </tr>
+            </table>
+            <br />
+        </div>
+    </div>
+    <div id="LoadingDiv"></div>
+</form>
+<script>
+    function clearLoader() {
+        $('#LoadingDiv').html('');
+    }
+
+    function showLoader() {
+        $('#LoadingDiv').fadeTo('slow', .8);
+        $('#LoadingDiv').append('<div style="background-color:black;position: fixed;top:0;left:0;width: 100%;height:100%;z-index:1000000001;-moz-opacity: 0.8;opacity:.80;filter: alpha(opacity=80);"><img src="/Images/loader.gif" style="background-color:black;position:fixed; top:33%; left:41%;"/></div>');
+    }
+
+    function hideLoader() {
+        $('#LoadingDiv').fadeOut('slow');
+    }
+
+
+
+</script>
+
+<script>
+    function printDivByID(Id) {
+
+        //var divToPrint = document.getElementById(Id);
+
+        //newWin = window.open("");
+        //newWin.document.write(divToPrint.outerHTML);
+        //newWin.print();
+        //newWin.close();
+
+
+        var divToPrint = document.getElementById(Id);
+
+        var newWin = window.open('', 'Print-Window-P2', '_blank');
+        newWin.document.open();
+        newWin.document.write('<html><body onload="window.print()">' + divToPrint.outerHTML + '</body></html>');
+        newWin.document.close();
+        //setTimeout(function () { newWin.close(); }, 10);
+    }
+</script>
+<script>
+    $(function () {
+        $('#trDepWise').hide();
+        $('#trDistWise').show();
+        //$('.selectpicker').selectpicker({
+        //    liveSearch: true,
+        //    showSubtext: true
+        //});
+        $('#ddlHeadDeptid').change(function () {
+            var Hdeptid = $(this).val();
+            $('#hidHead').val($(this).find('option:selected').text());
+            $('#hidDep').val('');
+            $('#hidDist').val($('#ddlDist').find('option:selected').text());
+            $.ajax({
+                url: '/ReportSummary/PublicReports/GetDepartment',
+                type: 'POST',
+                data: { HDeptID: Hdeptid },
+                success: function (data) {
+
+                    $("#ddlDeptid").empty();
+                    $.each(data, function (index, optiondata) {
+                        $("#ddlDeptid").append("<option value='" + optiondata.Value + "'>" + optiondata.Text + "</option>");
+                    });
+                    $('#ddlDeptid').selectpicker('refresh');
+                }
+            });
+        });
+        $('#ddlDeptid').change(function () {
+            $('#hidDep').val($(this).find('option:selected').text());
+        });
+        $('#ddlDist').change(function () {
+            $('#hidDist').val($(this).find('option:selected').text());
+        });
+    });
+    function getDetail(id, obj) {
+        $.ajax({
+            url: '/ReportSummary/PublicReports/GetDeptDetail',
+            type: 'POST',
+            data: { HeadDeptId: $('#ddlHeadDeptid').val(), DeptId: $('#ddlDeptid').val(), DistId: id },
+            success: function (data) {
+                $('#trDistWise').hide();
+                $('#trDepWise').find('td').html(data);
+                $('#trDepWise').show();
+                $('#trDepWise').find('td').find('label[id=lblDist]').text($(obj).text());
+            }
+        });
+    }
+    function goBackRpt() {
+        $('#trDepWise').hide();
+        $('#trDistWise').show();
+    }
+
+    function clkvalidate() {
+        if ($('#ddlDeptid').val().trim() == '' && $('#ddlDist').val().trim() == '') {
+            alert('Atleast one must be selected in State HQs and District.');
+            return false;
+        } else
+            return true;
+    }
+</script>
