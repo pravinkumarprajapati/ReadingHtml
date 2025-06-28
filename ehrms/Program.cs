@@ -6,9 +6,11 @@ class Program
     static async Task Main(string[] args)
     {
         var client = new HttpClient();
+        //1057292
+        // https://ehrms.upsdc.gov.in//ReportSummary/PublicReports/PtwoDetails?empcd=1057292&deptid=UPD0003&type=2
         var baseUrl = "https://ehrms.upsdc.gov.in//ReportSummary/PublicReports/PtwoDetails?empcd={0}&deptid=UPD0003&type=2";
-        int startEmpcd = 2200169; // Starting empcd
-        int endEmpcd = 2200169;   // 2 million records from start
+        int startEmpcd = 1057293; // Starting empcd
+        int endEmpcd = 1057293;   // 2 million records from start
         string outputFile = "employee_data.csv";
 
         // CSV headers for specified fields
